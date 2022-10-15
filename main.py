@@ -13,6 +13,12 @@ X = data.iloc[:, 1]
 Y = data.iloc[:, 2]
 
 if __name__ == '__main__':
+    fig = plt.figure()
+
+
+
+    plt.bar(T,X, 100, color='b')
+    plt.show()
     bins = 100
     plt.figure()
     plt.hist(X, bins=bins)
@@ -39,6 +45,6 @@ if __name__ == '__main__':
 
     plt.figure(figsize=(12, 8))
     plt.plot(x, pdf, label=dist_name, linewidth=3)
-    plt.plot(x, y, label= "Data")
+    plt.plot(x, y, label="Data")
     plt.legend()
     plt.show()
