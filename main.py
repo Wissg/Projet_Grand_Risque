@@ -9,6 +9,7 @@ import math
 from mpl_toolkits import mplot3d
 from datetime import datetime
 from copulae import EmpiricalCopula, pseudo_obs
+import copulae
 
 data = pd.read_excel("data\Base X Y.xlsx")
 T = data.iloc[:, 0]
@@ -18,17 +19,24 @@ data1 = data[["date", "X"]]
 data1 = data1.set_index("date")
 data3 = data[["X", "Y"]]
 
-def BIC(x,x_theo,parmater):
+
+def BIC(x, x_theo, parmater):
     n = len(x)
     residual = np.subtract(x_theo, x)
     SSE = np.sum(np.power(residual, 2))
-    return n*np.log(SSE/n) + parmater*np.log(n)
+    return n * np.log(SSE / n) + parmater * np.log(n)
 
-def AIC(x,x_theo,parmater):
+
+def AIC(x, x_theo, parmater):
     n = len(x)
     residual = np.subtract(x_theo, x)
     rss = np.sum(np.power(residual, 2))
     return n * np.log(rss / n) + 2 * parmater
+
+
+def Kolmogorov_Smirnov(x, x_theo):
+    return scipy.stats.kstest(X, x_theo, alternative='less')[1]
+
 
 def Mean_Excess_Function(x, u):
     e = 0
@@ -57,18 +65,19 @@ if __name__ == '__main__':
     plt.title("")
     plt.show()
 
+    print(Kolmogorov_Smirnov(X, scipy.stats.norm.cdf))
     # Milieu de chaque classe
     y, x = np.histogram(X, bins=bins, density=True)
     x = (x + np.roll(x, -1))[:-1] / 2.0
 
-    cov = np.stack((X, Y), axis=0)
+    cov = np.cov(np.stack((X, Y), axis=0))
     ecart_type_X = np.std(X)
     ecart_type_Y = np.std(Y)
     Moyenne_X = np.mean(X)
     Moyenne_Y = np.mean(Y)
-    Corr = np.cov(cov)[0, 1] / (ecart_type_X * ecart_type_Y)
+    Corr = cov[0, 1] / (ecart_type_X * ecart_type_Y)
 
-    print("Cov(X,Y) = ", np.cov(cov))
+    print("Cov(X,Y) = ", cov)
     print("var(x) = ", ecart_type_X ** 2, "var(y) = ", ecart_type_Y ** 2)
     print("E(x) = ", Moyenne_X, "E(y) = ", Moyenne_Y)
     print("Correlation = ", Corr)
@@ -83,9 +92,55 @@ if __name__ == '__main__':
     plt.xlabel("Rangs de X")
     plt.ylabel("Rangs de Y")
     plt.title("Copule de X et Y, Rangs de X en fonction des rangs de Y")
-    plt.legend()
     plt.show()
 
+    sns.jointplot(x=df['X'], y=df['Y'], kind='kde')
+    plt.show()
+
+    # Fit a gaussian copula to the data
+    _, ndim = data3.shape
+    copulaGaussianCopula = copulae.GaussianCopula(dim=ndim)
+    paramGaussianCopula = copulaGaussianCopula.fit(data3)
+
+    copulaFrankCopula = copulae.FrankCopula(dim=ndim)
+    paramFrankCopula = copulaFrankCopula.fit(data3)
+
+    copulaClaytonCopula = copulae.ClaytonCopula(dim=ndim)
+    paramClaytonCopula = copulaClaytonCopula.fit(data3)
+
+    copulaStudentCopula = copulae.StudentCopula(dim=ndim)
+    paramStudentCopula = copulaStudentCopula.fit(data3)
+
+    copulaGumbelCopula = copulae.GumbelCopula(dim=ndim)
+    paramGumbelCopula = copulaGumbelCopula.fit(data3)
+
+    theta_Frank = paramFrankCopula.params
+    theta_Gumbel = paramGumbelCopula.params
+    theta_Clayton = paramClaytonCopula.params
+    Degree_Freedom_student = paramStudentCopula.params[0]
+    corr_student = paramStudentCopula.params[1][0]
+    corr_matrix = paramGaussianCopula.params[0]
+
+    print(" theta_Frank =", theta_Frank)
+    print(" theta_Gumbel =", theta_Gumbel)
+    print(" Degree_Freedom =", corr_student)
+    print(" theta_Clayton =", theta_Clayton)
+    print(" corr_matrix =", corr_matrix)
+
+    means = [0.500000, 0.500000]
+    a = 0.288434 ** 2
+    b = 0.288434 * 0.288434 * corr_matrix
+    cov_matrix = [[a, b], [b, a]]
+    print(cov_matrix)
+
+    mvn_dist = scipy.stats.multivariate_normal(mean=means, cov=cov_matrix)
+    mvn_rvs = pd.DataFrame(mvn_dist.rvs(10000), columns=["Margin 1", "Margin 2"])
+
+    sns.jointplot(x="Margin 1", y="Margin 2", data=mvn_rvs, kind='kde')
+    plt.show()
+
+    plt.scatter(x="Margin 1", y="Margin 2", data=mvn_rvs)
+    plt.show()
 
     # for i in range(int(max(X))):
     #     e[i] = Mean_Excess_Function(X, u[i])
@@ -96,6 +151,8 @@ if __name__ == '__main__':
     # plt.title("Mean Excess Function")
     # plt.show()
 
+    #  La fonction des excès moyen est linéaire décroissante à partir d’un certain seuil ?
+    # ✓ On aura ξ < 0 donc cela correspondra au domaine d’attraction de Weibull
     print(scipy.stats.pearsonr(X, Y)[0])  # Pearson's r correlation de base déja calculé
 
     print(scipy.stats.spearmanr(X, Y)[0])  # Spearman's rho
