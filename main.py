@@ -141,19 +141,29 @@ if __name__ == '__main__':
     cov_matrix = [[a, b], [b, a]]
     print(cov_matrix)
     copula = GumbelCopula(theta=theta_Gumbel)
-    _ = copula.plot_scatter()
+    copula.plot_scatter()
+    plt.title("Gumbel Copula "+str(theta_Gumbel))
+    plt.show()
 
-    copula = ClaytonCopula(theta=theta_Gumbel)
-    _ = copula.plot_scatter()
+    copula = ClaytonCopula(theta=theta_Clayton)
+    copula.plot_scatter()
+    plt.title("Clayton Copula " + str(theta_Clayton))
+    plt.show()
 
-    copula = FrankCopula(theta=theta_Gumbel)
-    _ = copula.plot_scatter()
+    copula = FrankCopula(theta=theta_Frank)
+    copula.plot_scatter()
+    plt.title("Frank Copula " + str(theta_Frank))
+    plt.show()
 
     copula = StudentTCopula(df=Degree_Freedom_student , corr=corr_student)
-    _ = copula.plot_scatter()
+    copula.plot_scatter()
+    plt.title("Student Copula " + str(corr_student) +" df = "+str(Degree_Freedom_student))
+    plt.show()
 
     copula = GaussianCopula(corr=corr_matrix)
-    _ = copula.plot_scatter()
+    copula.plot_scatter()
+    plt.title("Gaussian Copula " + str(corr_matrix))
+    plt.show()
 
     mvn_dist = scipy.stats.multivariate_normal(mean=means, cov=cov_matrix)
     mvn_rvs = pd.DataFrame(mvn_dist.rvs(598), columns=["Margin 1", "Margin 2"])
