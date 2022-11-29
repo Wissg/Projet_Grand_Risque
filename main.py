@@ -172,9 +172,6 @@ if __name__ == '__main__':
     sns.jointplot(x="Margin 1", y="Margin 2", data=mvn_rvs, kind='kde')
     plt.show()
 
-    plt.scatter(x="Margin 1", y="Margin 2", data=mvn_rvs)
-    plt.show()
-
     # for i in range(int(max(X))):
     #     e[i] = Mean_Excess_Function(X, u[i])
     #     print(u[i])
