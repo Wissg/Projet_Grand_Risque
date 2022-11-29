@@ -37,7 +37,7 @@ def AIC(x, x_theo, parmater):
 
 
 def Kolmogorov_Smirnov(x, x_theo):
-    return scipy.stats.kstest(x, x_theo, alternative='less')[1]
+    return scipy.stats.ks_2samp(x, x_theo)[1]
 
 
 def Mean_Excess_Function(x, u):
@@ -73,7 +73,6 @@ if __name__ == '__main__':
     plt.title("")
     plt.show()
 
-    print(Kolmogorov_Smirnov(X, scipy.stats.norm.cdf))
     # Milieu de chaque classe
     y, x = np.histogram(X, bins=bins, density=True)
     x = (x + np.roll(x, -1))[:-1] / 2.0
@@ -143,27 +142,72 @@ if __name__ == '__main__':
     copula = GumbelCopula(theta=theta_Gumbel)
     copula.plot_scatter()
     plt.title("Gumbel Copula "+str(theta_Gumbel))
+    aic = AIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("AIC = ", aic)
+    bic = BIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("BIC = ", bic)
+    ks = Kolmogorov_Smirnov(np.array(df.values)[:,0], np.array(copula.rvs(nobs=598, random_state=None))[:,0])
+    print("Kolmogorov_Smirnov = ", ks)
+    plt.annotate("AIC = " + str(aic), xy=(0, 1))
+    plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
+    plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
     plt.show()
 
     copula = ClaytonCopula(theta=theta_Clayton)
     copula.plot_scatter()
     plt.title("Clayton Copula " + str(theta_Clayton))
+    aic = AIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("AIC = ", aic)
+    bic = BIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("BIC = ", bic)
+    ks = Kolmogorov_Smirnov(np.array(df.values)[:,0], np.array(copula.rvs(nobs=598, random_state=None))[:,0])
+    print("Kolmogorov_Smirnov = ", ks)
+    plt.annotate("AIC = " + str(aic), xy=(0, 1))
+    plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
+    plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
     plt.show()
 
     copula = FrankCopula(theta=theta_Frank)
     copula.plot_scatter()
     plt.title("Frank Copula " + str(theta_Frank))
+    aic = AIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("AIC = ", aic)
+    bic = BIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("BIC = ", bic)
+    ks = Kolmogorov_Smirnov(np.array(df.values)[:,0], np.array(copula.rvs(nobs=598, random_state=None))[:,0])
+    print("Kolmogorov_Smirnov = ", ks)
+    plt.annotate("AIC = " + str(aic), xy=(0, 1))
+    plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
+    plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
     plt.show()
 
     copula = StudentTCopula(df=Degree_Freedom_student , corr=corr_student)
     copula.plot_scatter()
     plt.title("Student Copula " + str(corr_student) +" df = "+str(Degree_Freedom_student))
-    print("AIC = ", df.values, copula.rvs(nobs=598, random_state=None), 2)
+    # print(np.array(copula.rvs(nobs=598, random_state=None)).shape)
+    aic = AIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("AIC = ", aic)
+    bic = BIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("BIC = ", bic)
+    ks = Kolmogorov_Smirnov(np.array(df.values)[:,0], np.array(copula.rvs(nobs=598, random_state=None))[:,0])
+    print("Kolmogorov_Smirnov = ", ks)
+    plt.annotate("AIC = "+str(aic),xy=(0,1))
+    plt.annotate("BIC = "+str(bic),xy=(0,0.95))
+    plt.annotate("Ks = "+str(ks),xy=(0,0.9))
     plt.show()
 
     copula = GaussianCopula(corr=corr_matrix)
     copula.plot_scatter()
     plt.title("Gaussian Copula " + str(corr_matrix))
+    aic = AIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("AIC = ", aic)
+    bic = BIC(np.array(df.values), np.array(copula.rvs(nobs=598, random_state=None)), 2)
+    print("BIC = ", bic)
+    ks = Kolmogorov_Smirnov(np.array(df.values)[:,0], np.array(copula.rvs(nobs=598, random_state=None))[:,0])
+    print("Kolmogorov_Smirnov = ", ks)
+    plt.annotate("AIC = " + str(aic), xy=(0, 1))
+    plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
+    plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
     plt.show()
 
     mvn_dist = scipy.stats.multivariate_normal(mean=means, cov=cov_matrix)
