@@ -37,7 +37,7 @@ def AIC(x, x_theo, parmater):
 
 
 def Kolmogorov_Smirnov(x, x_theo):
-    return scipy.stats.kstest(X, x_theo, alternative='less')[1]
+    return scipy.stats.kstest(x, x_theo, alternative='less')[1]
 
 
 def Mean_Excess_Function(x, u):
@@ -158,6 +158,7 @@ if __name__ == '__main__':
     copula = StudentTCopula(df=Degree_Freedom_student , corr=corr_student)
     copula.plot_scatter()
     plt.title("Student Copula " + str(corr_student) +" df = "+str(Degree_Freedom_student))
+    print("AIC = ", df.values, copula.rvs(nobs=598, random_state=None), 2)
     plt.show()
 
     copula = GaussianCopula(corr=corr_matrix)
@@ -167,7 +168,6 @@ if __name__ == '__main__':
 
     mvn_dist = scipy.stats.multivariate_normal(mean=means, cov=cov_matrix)
     mvn_rvs = pd.DataFrame(mvn_dist.rvs(598), columns=["Margin 1", "Margin 2"])
-    print("AIC = ", AIC(df['X'], mvn_rvs["Margin 1"], 2))
 
     sns.jointplot(x="Margin 1", y="Margin 2", data=mvn_rvs, kind='kde')
     plt.show()
