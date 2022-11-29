@@ -10,6 +10,8 @@ from mpl_toolkits import mplot3d
 from datetime import datetime
 from copulae import EmpiricalCopula, pseudo_obs
 import copulae
+from statsmodels.distributions.copula.api import (
+    CopulaDistribution, GumbelCopula, IndependenceCopula, ClaytonCopula,FrankCopula,StudentTCopula,GaussianCopula)
 
 data = pd.read_excel("data\Base X Y.xlsx")
 T = data.iloc[:, 0]
@@ -48,6 +50,12 @@ def Mean_Excess_Function(x, u):
             b = b + 1
     e = a / b
     return e
+
+
+def clayton(theta, u, v):
+    a = np.maximum(np.power(u, -theta) + np.power(v, -theta) - 1, 0)
+    a = np.power(a, -1 / theta)
+    return a
 
 
 print(data1)
@@ -132,9 +140,24 @@ if __name__ == '__main__':
     b = 0.288434 * 0.288434 * corr_matrix
     cov_matrix = [[a, b], [b, a]]
     print(cov_matrix)
+    copula = GumbelCopula(theta=theta_Gumbel)
+    _ = copula.plot_scatter()
+
+    copula = ClaytonCopula(theta=theta_Gumbel)
+    _ = copula.plot_scatter()
+
+    copula = FrankCopula(theta=theta_Gumbel)
+    _ = copula.plot_scatter()
+
+    copula = StudentTCopula(df=Degree_Freedom_student , corr=corr_student)
+    _ = copula.plot_scatter()
+
+    copula = GaussianCopula(corr=corr_matrix)
+    _ = copula.plot_scatter()
 
     mvn_dist = scipy.stats.multivariate_normal(mean=means, cov=cov_matrix)
-    mvn_rvs = pd.DataFrame(mvn_dist.rvs(10000), columns=["Margin 1", "Margin 2"])
+    mvn_rvs = pd.DataFrame(mvn_dist.rvs(598), columns=["Margin 1", "Margin 2"])
+    print("AIC = ", AIC(df['X'], mvn_rvs["Margin 1"], 2))
 
     sns.jointplot(x="Margin 1", y="Margin 2", data=mvn_rvs, kind='kde')
     plt.show()
