@@ -99,6 +99,7 @@ if __name__ == '__main__':
     plt.xlabel("Rangs de X")
     plt.ylabel("Rangs de Y")
     plt.title("Copule de X et Y, Rangs de X en fonction des rangs de Y")
+    plt.savefig("Graph/Copule_empirique.png")
     plt.show()
 
     sns.jointplot(x=df['X'], y=df['Y'], kind='kde')
@@ -151,6 +152,7 @@ if __name__ == '__main__':
     plt.annotate("AIC = " + str(aic), xy=(0, 1))
     plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
     plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
+    plt.savefig("Graph/Gumbel_Copula.png")
     plt.show()
 
     copula = ClaytonCopula(theta=theta_Clayton)
@@ -165,6 +167,7 @@ if __name__ == '__main__':
     plt.annotate("AIC = " + str(aic), xy=(0, 1))
     plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
     plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
+    plt.savefig("Graph/Clayton_Copula.png")
     plt.show()
 
     copula = FrankCopula(theta=theta_Frank)
@@ -179,6 +182,7 @@ if __name__ == '__main__':
     plt.annotate("AIC = " + str(aic), xy=(0, 1))
     plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
     plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
+    plt.savefig("Graph/Frank_Copula.png")
     plt.show()
 
     copula = StudentTCopula(df=Degree_Freedom_student , corr=corr_student)
@@ -194,6 +198,7 @@ if __name__ == '__main__':
     plt.annotate("AIC = "+str(aic),xy=(0,1))
     plt.annotate("BIC = "+str(bic),xy=(0,0.95))
     plt.annotate("Ks = "+str(ks),xy=(0,0.9))
+    plt.savefig("Graph/Student_Copula.png")
     plt.show()
 
     copula = GaussianCopula(corr=corr_matrix)
@@ -208,6 +213,7 @@ if __name__ == '__main__':
     plt.annotate("AIC = " + str(aic), xy=(0, 1))
     plt.annotate("BIC = " + str(bic), xy=(0, 0.95))
     plt.annotate("Ks = " + str(ks), xy=(0, 0.9))
+    plt.savefig("Graph/Gaussian_Copula.png")
     plt.show()
 
     mvn_dist = scipy.stats.multivariate_normal(mean=means, cov=cov_matrix)
